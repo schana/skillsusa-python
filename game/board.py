@@ -11,6 +11,7 @@ Color = typing.NewType('Color', util.Color)
 
 class Board:
     screen = None
+    i = 0
 
     def __init__(self, rows=16, columns=20, cell_size=50, padding=5):
         self.rows = rows
@@ -44,4 +45,7 @@ class Board:
             if event.type == pygame.QUIT:
                 sys.exit()
         pygame.display.flip()
-        pygame.time.delay(50)
+        if False:
+            pygame.image.save(self.screen, 'pics/pic' + str(self.i) + '.png')
+        self.i += 1
+        pygame.time.delay(5)
