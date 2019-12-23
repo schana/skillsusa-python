@@ -1,3 +1,4 @@
 from collections import namedtuple
 
-Point = namedtuple()
+Cell = namedtuple('Cell', ['r', 'c'])
+Color = namedtuple('Color', ['r', 'g', 'b'])
