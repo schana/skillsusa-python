@@ -1,4 +1,4 @@
-import random
+import itertools
 import sys
 import typing
 
@@ -16,6 +16,7 @@ class Board:
     def __init__(self, rows=16, columns=20, cell_size=50, padding=5):
         self.rows = rows
         self.columns = columns
+        self.cells = {util.Cell(r, c) for r, c in itertools.product(range(self.rows), range(self.columns))}
         self.cell_size = cell_size
         self.padding = padding
 
@@ -48,4 +49,4 @@ class Board:
         if False:
             pygame.image.save(self.screen, 'pics/pic' + str(self.i) + '.png')
         self.i += 1
-        pygame.time.delay(5)
+        pygame.time.delay(50)
