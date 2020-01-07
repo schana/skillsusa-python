@@ -7,12 +7,15 @@ from game import snake
 
 
 class Game:
-    def __init__(self, rows, columns, display=True):
+    def __init__(self, rows, columns, turn_limit=-1, display=True, record=False, delay=0):
         self.rows = rows
         self.columns = columns
+        self.turn_limit = turn_limit
         self.last_cell = util.Cell(self.rows - 1, self.columns - 1)
         self.board = board.Board(rows=self.rows, columns=self.columns)
         self.display = display
+        self.record = record
+        self.delay = delay
         if self.display:
             self.board.initialize()
         self.snakes = []
@@ -62,11 +65,13 @@ class Game:
             'data': current_snake.data
         }
 
-    def run(self):
+    def run(self, identifier):
         self.food = self.get_random_cell()
         keep_going = True
-        while keep_going:
+        limit = self.turn_limit
+        while keep_going and limit != 0:
             keep_going = False
+            limit -= 1
             for s in self.snakes:
                 if s.alive:
                     keep_going = True
@@ -85,10 +90,10 @@ class Game:
                     else:
                         s.age += 1
                         if self.display:
-                            self.board.fill_cells([s.head], s.color)
+                            self.board.fill_cells([s.head], s.color, s.name[0].upper())
                             for i in range(1, len(s.body)):
-                                self.board.fill_cells([s.body[i]], s.color)
+                                self.board.fill_cells([s.body[i]], s.color, s.name[0])
             if self.display:
-                self.board.fill_cells([self.food], util.Color(0, 100, 0))
-                self.board.draw()
+                self.board.fill_cells([self.food], util.Color(0, 100, 0), '+')
+                self.board.draw(identifier, self.record, self.delay)
                 self.board.clear()

@@ -3,25 +3,32 @@ import json
 from game import util
 import random
 
+RUNS = 1
+DISPLAY = True
+RECORD = False
+DELAY = 20
+TURN_LIMIT = 1000
+
 
 def main():
-    g = runner.Game(10, 10, display=False)
-    g.add_snake('alice', lambda p: call_move(p, move1))
-    g.add_snake('bob', lambda p: call_move(p, move2))
-    g.add_snake('charlie', lambda p: call_move(p, move3))
-    g.run()
-    scores = g.get_scores()
-    for i in range(1000):
+    g = runner.Game(40, 40, turn_limit=TURN_LIMIT, display=DISPLAY, record=RECORD, delay=DELAY)
+    scores = {}
+    for i in range(RUNS):
         print(i)
         g.snakes = []
-        g.add_snake('alice', lambda p: call_move(p, move1))
-        g.add_snake('bob', lambda p: call_move(p, move2))
-        g.add_snake('charlie', lambda p: call_move(p, move3))
-        g.run()
+        g.add_snake('alice', lambda p: call_move(p, blind_snake))
+        g.add_snake('bob', lambda p: call_move(p, random_snake))
+        g.add_snake('charlie', lambda p: call_move(p, star_snake))
+        g.add_snake('david', lambda p: call_move(p, brute_force_snake))
+        g.run(i)
+        if RECORD:
+            animate_game(i)
         new_scores = g.get_scores()
-        for n in ['alice', 'bob', 'charlie']:
+        for n in ['alice', 'bob', 'charlie', 'david']:
+            snake_score = scores.get(n, {})
+            scores[n] = snake_score
             for j in ['score', 'age']:
-                scores[n][j] += new_scores[n][j]
+                scores[n][j] = scores[n].get(j, 0) + new_scores.get(n, {}).get(j, 0)
     print(json.dumps(scores, indent=2))
 
 
@@ -39,11 +46,11 @@ def call_move(json_parameters, move_fun):
     return move_fun(params['head'], params['body'], params['filled'], params['food'], params['columns'], params['rows'])
 
 
-def move1(*args):
+def random_snake(*args):
     return random.choice(['l', 'r', 'u', 'd'])
 
 
-def move2(head, body, filled, food, columns, rows):
+def blind_snake(head, body, filled, food, columns, rows):
     if head.r > food.r:
         return 'u'
     elif head.r < food.r:
@@ -54,7 +61,7 @@ def move2(head, body, filled, food, columns, rows):
         return 'r'
 
 
-def move3(head, body, filled_cells, food, board_width, board_height):
+def star_snake(head, body, filled_cells, food, board_width, board_height):
     if filled_cells is None:
         filled_cells = []
     from math import sqrt, pow
@@ -98,43 +105,7 @@ def move3(head, body, filled_cells, food, board_width, board_height):
         return 'u'
 
     start = head
-    if len(body) < 300:
-        goal = food
-    else:
-        r, c = 0, 0
-        if head.r == board_height - 1:
-            if head.c % 2 == 0:
-                r = head.r
-                c = head.c + 1
-            else:
-                r = head.r - 1
-                c = head.c
-        else:
-            if head.r == 0:
-                if head.c == 0:
-                    r = head.r + 1
-                    c = head.c
-                else:
-                    r = head.r
-                    c = head.c - 1
-            elif head.r == 1:
-                if head.c == board_width - 1:
-                    r = head.r - 1
-                    c = head.c
-                else:
-                    if head.c % 2 == 0:
-                        r = head.r + 1
-                        c = head.c
-                    else:
-                        r = head.r
-                        c = head.c + 1
-            else:
-                if head.c % 2 == 0:
-                    r = head.r + 1
-                else:
-                    r = head.r - 1
-                c = head.c
-        goal = util.Cell(r, c)
+    goal = food
     closedset = []
     openset = [start]
     came_from = {}
@@ -176,6 +147,54 @@ def move3(head, body, filled_cells, food, board_width, board_height):
             continue
         return get_direction(head, point)
     return 'u'
+
+
+def brute_force_snake(head, body, filled_cells, food, board_width, board_height):
+    if head.r == board_height - 1:
+        if head.c % 2 == 0:
+            return 'r'
+        else:
+            return 'u'
+    else:
+        if head.r == 0:
+            if head.c == 0:
+                return 'd'
+            else:
+                return 'l'
+        elif head.r == 1:
+            if head.c == board_width - 1:
+                return 'u'
+            else:
+                if head.c % 2 == 0:
+                    return 'd'
+                else:
+                    return 'r'
+        else:
+            if head.c % 2 == 0:
+                return 'd'
+            else:
+                return 'u'
+
+
+def animate_game(identifier):
+    import subprocess, os
+
+    files = []
+
+    for root, dirs, fs in os.walk('pics'):
+        for f in fs:
+            files.append(str(root) + '/' + str(f))
+
+    command = [
+        'C:/Program Files/ImageMagick-7.0.9-Q16/magick.exe',
+        'convert',
+        '-delay', '5',
+        '-size', '545x545'
+    ] + files + [
+        'anim_' + str(identifier) + '.gif'
+    ]
+
+    subprocess.call(command)
 
 
 if __name__ == '__main__':
