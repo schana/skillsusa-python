@@ -65,6 +65,23 @@ class Game:
             'data': current_snake.data
         }
 
+    def move_snake(self, s):
+        if s.alive:
+            filled_cells = self.get_filled_cells()
+            s.do_move(s.move(json.dumps(self.generate_move_parameters(s, filled_cells))))
+            should_grow = self.food in s.body
+            if s.should_die(self.last_cell, filled_cells, should_grow):
+                s.alive = False
+            else:
+                s.age += 1
+                if self.display:
+                    self.board.fill_cells([s.head], s.color, s.name[0].upper())
+                    for i in range(1, len(s.body)):
+                        self.board.fill_cells([s.body[i]], s.color, s.name[0])
+        else:
+            return False
+        return True
+
     def run(self, identifier):
         self.food = self.get_random_cell()
         keep_going = True
@@ -73,26 +90,14 @@ class Game:
             keep_going = False
             limit -= 1
             for s in self.snakes:
-                if s.alive:
-                    keep_going = True
-                    filled_cells = self.get_filled_cells()
-                    s.do_move(s.move(json.dumps(self.generate_move_parameters(s, filled_cells))))
-                    should_grow = self.food in s.body
-                    if should_grow:
-                        food_options = list(self.board.cells.difference(filled_cells))
-                        if food_options:
-                            self.food = random.choice(food_options)
-                        else:
-                            print('no free spaces')
-                            keep_going = False
-                    if s.should_die(self.last_cell, filled_cells, should_grow):
-                        s.alive = False
+                keep_going = keep_going and self.move_snake(s)
+                if s.alive and self.food in s.body:
+                    food_options = list(self.board.cells.difference(self.get_filled_cells()))
+                    if food_options:
+                        self.food = random.choice(food_options)
                     else:
-                        s.age += 1
-                        if self.display:
-                            self.board.fill_cells([s.head], s.color, s.name[0].upper())
-                            for i in range(1, len(s.body)):
-                                self.board.fill_cells([s.body[i]], s.color, s.name[0])
+                        print('no free spaces')
+                        keep_going = False
             if self.display:
                 self.board.fill_cells([self.food], util.Color(0, 100, 0), '+')
                 self.board.draw(identifier, self.record, self.delay)

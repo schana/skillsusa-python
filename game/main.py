@@ -4,7 +4,7 @@ from game import util
 import random
 
 RUNS = 1
-DISPLAY = True
+DISPLAY = False
 RECORD = False
 DELAY = 20
 TURN_LIMIT = 1000
