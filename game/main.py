@@ -3,23 +3,22 @@ import json
 from game import util
 import random
 
-RUNS = 1
-DISPLAY = False
+RUNS = 100
+DISPLAY = True
 RECORD = False
-DELAY = 20
+DELAY = 50
 TURN_LIMIT = 1000
+GUI = True
 
 
 def main():
-    g = runner.Game(40, 40, turn_limit=TURN_LIMIT, display=DISPLAY, record=RECORD, delay=DELAY)
+    g = runner.Game(10, 10, turn_limit=TURN_LIMIT, display=DISPLAY, record=RECORD, delay=DELAY, gui=GUI)
     scores = {}
     for i in range(RUNS):
-        print(i)
-        g.snakes = []
         g.add_snake('alice', lambda p: call_move(p, blind_snake))
         g.add_snake('bob', lambda p: call_move(p, random_snake))
         g.add_snake('charlie', lambda p: call_move(p, star_snake))
-        g.add_snake('david', lambda p: call_move(p, brute_force_snake))
+        # g.add_snake('david', lambda p: call_move(p, brute_force_snake))
         g.run(i)
         if RECORD:
             animate_game(i)
@@ -36,21 +35,20 @@ def unpack(parameters):
     params = json.loads(parameters)
     params['head'] = util.Cell(r=params['head']['r'], c=params['head']['c'])
     params['body'] = [util.Cell(r=p['r'], c=p['c']) for p in params['body']]
-    params['filled'] = [util.Cell(r=p['r'], c=p['c']) for p in params['filled']]
     params['food'] = util.Cell(r=params['food']['r'], c=params['food']['c'])
     return params
 
 
 def call_move(json_parameters, move_fun):
     params = unpack(json_parameters)
-    return move_fun(params['head'], params['body'], params['filled'], params['food'], params['columns'], params['rows'])
+    return move_fun(params['head'], params['body'], params['food'], params['columns'], params['rows'])
 
 
 def random_snake(*args):
     return random.choice(['l', 'r', 'u', 'd'])
 
 
-def blind_snake(head, body, filled, food, columns, rows):
+def blind_snake(head, body, food, columns, rows):
     if head.r > food.r:
         return 'u'
     elif head.r < food.r:
@@ -61,9 +59,7 @@ def blind_snake(head, body, filled, food, columns, rows):
         return 'r'
 
 
-def star_snake(head, body, filled_cells, food, board_width, board_height):
-    if filled_cells is None:
-        filled_cells = []
+def star_snake(head, body, food, board_width, board_height):
     from math import sqrt, pow
 
     def heuristic_cost_estimate(start, goal):
@@ -80,7 +76,7 @@ def star_snake(head, body, filled_cells, food, board_width, board_height):
     def neighbour_nodes(point):
         neighbours = []
         for new_point in get_direct_neighbours(point):
-            if new_point in body or new_point in filled_cells or 0 > new_point.c >= board_width - 1 or 0 > new_point.r >= board_height - 1:
+            if new_point in body or 0 > new_point.c >= board_width - 1 or 0 > new_point.r >= board_height - 1:
                 continue
             neighbours.append(new_point)
         return neighbours
@@ -143,13 +139,13 @@ def star_snake(head, body, filled_cells, food, board_width, board_height):
                 if neighbour not in openset:
                     openset.append(neighbour)
     for point in get_direct_neighbours(head):
-        if point in body or point in filled_cells or 0 >= point.c > board_width - 1 or 0 >= point.r > board_height - 1:
+        if point in body or 0 >= point.c > board_width - 1 or 0 >= point.r > board_height - 1:
             continue
         return get_direction(head, point)
     return 'u'
 
 
-def brute_force_snake(head, body, filled_cells, food, board_width, board_height):
+def brute_force_snake(head, body, food, board_width, board_height):
     if head.r == board_height - 1:
         if head.c % 2 == 0:
             return 'r'
