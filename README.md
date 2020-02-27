@@ -40,7 +40,7 @@ Your snake will be scored on how many pieces of food it eats in the allotted tim
 
 ## Getting Started
 
-Your goal is to implement the `getNextDirection()` function in `MyMover.java`. `MyMover` extends `SnakeMover`, which provides the basic blueprint to follow. `MyMover` has access to a `Board`, which contains all the relevant state of the game. The `exmpleMovers` package has some completed solvers for inspiration.
+Your goal is to implement the `get_next_direction()` function in `mover.py`. `SnakeMover` has access to the `board` module, which contains all the relevant state of the game. The `examples` module has some completed solvers for inspiration.
 
 ### Moving algorithms
 

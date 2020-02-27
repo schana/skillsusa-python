@@ -1,4 +1,5 @@
 from game import direction
+from game import board
 
 
 class SnakeMover:
