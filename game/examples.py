@@ -16,28 +16,30 @@ class BlindMover:
             return direction.RIGHT
 
 
-def completionist_snake(head, body, food, board_width, board_height):
-    if head.r == board_height - 1:
-        if head.c % 2 == 0:
-            return 'r'
+class CompletionistMover:
+    def get_next_direction(self):
+        head = board.get_head()
+        if head.row == board.ROWS - 1:
+            if head.column % 2 == 0:
+                return direction.RIGHT
+            else:
+                return direction.UP
         else:
-            return 'u'
-    else:
-        if head.r == 0:
-            if head.c == 0:
-                return 'd'
-            else:
-                return 'l'
-        elif head.r == 1:
-            if head.c == board_width - 1:
-                return 'u'
-            else:
-                if head.c % 2 == 0:
-                    return 'd'
+            if head.row == 0:
+                if head.column == 0:
+                    return direction.DOWN
                 else:
-                    return 'r'
-        else:
-            if head.c % 2 == 0:
-                return 'd'
+                    return direction.LEFT
+            elif head.row == 1:
+                if head.column == board.COLUMNS - 1:
+                    return direction.UP
+                else:
+                    if head.column % 2 == 0:
+                        return direction.DOWN
+                    else:
+                        return direction.RIGHT
             else:
-                return 'u'
+                if head.column % 2 == 0:
+                    return direction.DOWN
+                else:
+                    return direction.UP

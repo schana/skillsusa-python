@@ -14,7 +14,7 @@ mover = m.SnakeMover()
 
 def reset():
     global food, age
-    body.initialize(cell.Cell(random.randint(0, board.ROWS), random.randint(0, board.COLUMNS)))
+    body.initialize(cell.Cell(random.randint(0, board.ROWS - 1), random.randint(0, board.COLUMNS - 1)))
     snake.mover = mover
     snake.alive = True
     food = get_random_free_cell()

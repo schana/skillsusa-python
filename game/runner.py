@@ -1,8 +1,8 @@
-from game.internal import game_state
+from game.internal import game_state, graphics
 from game.internal import snake
 
 RUNS = 100000
-DISPLAY = False
+DISPLAY = True
 RECORD = False
 DELAY = 50
 TURN_LIMIT = 1000
@@ -13,8 +13,21 @@ def main():
     global runs
     game_state.reset()
     if DISPLAY:
-        # do graphics stuff
-        pass
+        painter = graphics.Painter()
+        painter.initialize()
+        while True:
+            painter.clear()
+            painter.draw_boarders()
+            painter.draw_snake()
+            painter.draw_food()
+            if snake.alive and game_state.age < TURN_LIMIT:
+                painter.draw(delay=DELAY)
+                game_state.step()
+            else:
+                painter.draw(delay=1000)
+                runs += 1
+                print(runs, 'Score:', game_state.get_score(), 'Age:', game_state.age)
+                game_state.reset()
     else:
         sum_score = 0
         sum_age = 0
@@ -31,17 +44,9 @@ def main():
         print('Average Score: ', float(sum_score) / runs, ', Average Age: ', float(sum_age) / runs, sep='')
 
 
-'''
-        if RECORD:
-            animate_game(i)
-'''
-
-
 def animate_game(identifier):
     import subprocess, os
-
     files = []
-
     for root, dirs, fs in os.walk('pics'):
         for f in fs:
             files.append(str(root) + '/' + str(f))
