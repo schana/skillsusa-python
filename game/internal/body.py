@@ -1,31 +1,35 @@
 from game import board
 
+cells = []
 
-class Body:
-    def __init__(self, head):
-        self.cells = [head]
 
-    def move(self, next_head, should_grow):
-        self.cells.insert(0, next_head)
-        if not should_grow:
-            self.cells.pop()
+def initialize(head):
+    global cells
+    cells = [head]
 
-    def is_valid(self):
-        # Check for overlaps
-        if len(set(self.cells)) != len(self.cells):
+
+def move(next_head, should_grow):
+    cells.insert(0, next_head)
+    if not should_grow:
+        cells.pop()
+
+
+def is_valid():
+    # Check for overlaps
+    if len(set(cells)) != len(cells):
+        return False
+    # Check boundaries
+    for cell in cells:
+        if cell.row < 0:
             return False
-        # Check boundaries
-        for cell in self.cells:
-            if not self.is_body_part_valid(cell):
-                return False
-        return True
-
-    def is_body_part_valid(self, cell):
-        if cell.row < 0 or cell.row >= board.ROWS:
+        if cell.row >= board.ROWS:
             return False
-        if cell.column < 0 or cell.column >= board.COLUMNS:
+        if cell.column < 0:
             return False
-        return True
+        if cell.column >= board.COLUMNS:
+            return False
+    return True
 
-    def get_head(self):
-        return self.cells[0]
+
+def get_head():
+    return cells[0]

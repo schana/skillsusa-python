@@ -10,26 +10,26 @@ row and column indices represented by (row, column) Cells:
 
 ROWS = 10
 COLUMNS = 10
+body = []
+food = None
 
 
-class Board:
-    body = []
-    food = None
+def get_head():
+    """
+    :return: the cell representing the head of the snake
+    """
+    return body[0]
 
-    def get_head(self):
-        """
-        :return: the cell representing the head of the snake
-        """
-        return self.body[0]
 
-    def get_body(self):
-        """
-        :return: the list of cells making up the snake, including the head
-        """
-        return self.body
+def get_body():
+    """
+    :return: the list of cells making up the snake, including the head
+    """
+    return body
 
-    def get_food(self):
-        """
-        :return: the Cell representing the location of the food
-        """
-        return self.food
+
+def get_food():
+    """
+    :return: the Cell representing the location of the food
+    """
+    return food

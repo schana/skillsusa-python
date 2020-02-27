@@ -1,12 +1,19 @@
-def blind_snake(head, body, food, columns, rows):
-    if head.r > food.r:
-        return 'u'
-    elif head.r < food.r:
-        return 'd'
-    elif head.c > food.c:
-        return 'l'
-    else:
-        return 'r'
+from game import board
+from game import direction
+
+
+class BlindMover:
+    def get_next_direction(self):
+        head = board.get_head()
+        food = board.get_food()
+        if head.row > food.row:
+            return direction.UP
+        elif head.row < food.row:
+            return direction.DOWN
+        elif head.column > food.column:
+            return direction.LEFT
+        else:
+            return direction.RIGHT
 
 
 def completionist_snake(head, body, food, board_width, board_height):

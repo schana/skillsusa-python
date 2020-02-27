@@ -4,15 +4,10 @@ from game import direction
 class SnakeMover:
     """
     This is the base mover that you'll be extending. It informs the game how
-    your snake should move.
+    your snake should move. Everything about the board's state can be accessed
+    from the 'board' module that's imported above. Look in board.py or check
+    the examples for usages.
     """
-    def __init__(self, board):
-        """
-
-        :param board: board the game board that holds the state of the snake's
-                      body, food location, and the size of the board
-        """
-        self.board = board
 
     def get_next_direction(self):
         """

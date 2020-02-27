@@ -1,7 +1,7 @@
-from game import board
 from game.internal import game_state
+from game.internal import snake
 
-RUNS = 1000000
+RUNS = 100000
 DISPLAY = False
 RECORD = False
 DELAY = 50
@@ -11,7 +11,7 @@ runs = 0
 
 def main():
     global runs
-    g = game_state.GameState(board.Board())
+    game_state.reset()
     if DISPLAY:
         # do graphics stuff
         pass
@@ -19,21 +19,23 @@ def main():
         sum_score = 0
         sum_age = 0
         while runs < RUNS:
-            if g.snake.alive and g.age < TURN_LIMIT:
-                g.step()
+            if snake.alive and game_state.age < TURN_LIMIT:
+                game_state.step()
             else:
                 runs += 1
-                sum_score += g.get_score()
-                sum_age += g.age
-                g.reset()
+                sum_score += game_state.get_score()
+                sum_age += game_state.age
+                game_state.reset()
                 if runs % (RUNS / 20) == 0:
                     print('{}% complete'.format(100 * runs / RUNS))
         print('Average Score: ', float(sum_score) / runs, ', Average Age: ', float(sum_age) / runs, sep='')
+
 
 '''
         if RECORD:
             animate_game(i)
 '''
+
 
 def animate_game(identifier):
     import subprocess, os

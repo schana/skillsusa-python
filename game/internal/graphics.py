@@ -30,37 +30,41 @@ class Painter:
         self.screen = pygame.display.set_mode((self.get_width(), self.get_height()))
 
     def fill_cells(self, cells, color):
-            surface = pygame.Surface((self.cell_size - self.padding, self.cell_size - self.padding))
-            fill_horizontal = pygame.Surface((self.padding * 2, self.cell_size - self.padding))
-            fill_vertical = pygame.Surface((self.cell_size - self.padding, self.padding * 2))
-            surface.fill(color)
-            fill_horizontal.fill(color)
-            fill_vertical.fill(color)
-            previous = None
-            for cell in cells:
-                rect = surface.get_rect(
-                    top=self.cell_size + self.padding + cell.r * (self.cell_size + self.padding),
-                    left=self.cell_size + self.padding + cell.c * (self.cell_size + self.padding))
-                self.screen.blit(surface, rect)
-                if previous is not None:
-                    dr, dc = cell.r - previous.r, cell.c - previous.c
-                    if dr == 0:
-                        if dc == -1:
-                            rect = fill_horizontal.get_rect(top=self.cell_size +cell.r * (self.cell_size + self.padding) + self.padding,
-                                                            left=self.cell_size +previous.c * (self.cell_size + self.padding) - self.padding)
-                        else:
-                            rect = fill_horizontal.get_rect(top=self.cell_size +cell.r * (self.cell_size + self.padding) + self.padding,
-                                                            left=self.cell_size +cell.c * (self.cell_size + self.padding) - self.padding)
-                        self.screen.blit(fill_horizontal, rect)
+        surface = pygame.Surface((self.cell_size - self.padding, self.cell_size - self.padding))
+        fill_horizontal = pygame.Surface((self.padding * 2, self.cell_size - self.padding))
+        fill_vertical = pygame.Surface((self.cell_size - self.padding, self.padding * 2))
+        surface.fill(color)
+        fill_horizontal.fill(color)
+        fill_vertical.fill(color)
+        previous = None
+        for cell in cells:
+            rect = surface.get_rect(
+                top=self.cell_size + self.padding + cell.r * (self.cell_size + self.padding),
+                left=self.cell_size + self.padding + cell.c * (self.cell_size + self.padding))
+            self.screen.blit(surface, rect)
+            if previous is not None:
+                dr, dc = cell.r - previous.r, cell.c - previous.c
+                if dr == 0:
+                    if dc == -1:
+                        rect = fill_horizontal.get_rect(
+                            top=self.cell_size + cell.r * (self.cell_size + self.padding) + self.padding,
+                            left=self.cell_size + previous.c * (self.cell_size + self.padding) - self.padding)
                     else:
-                        if dr == -1:
-                            rect = fill_vertical.get_rect(top=self.cell_size +previous.r * (self.cell_size + self.padding) - self.padding,
-                                                          left=self.cell_size +cell.c * (self.cell_size + self.padding) + self.padding)
-                        else:
-                            rect = fill_vertical.get_rect(top=self.cell_size +cell.r * (self.cell_size + self.padding) - self.padding,
-                                                          left=self.cell_size +cell.c * (self.cell_size + self.padding) + self.padding)
-                        self.screen.blit(fill_vertical, rect)
-                previous = cell
+                        rect = fill_horizontal.get_rect(
+                            top=self.cell_size + cell.r * (self.cell_size + self.padding) + self.padding,
+                            left=self.cell_size + cell.c * (self.cell_size + self.padding) - self.padding)
+                    self.screen.blit(fill_horizontal, rect)
+                else:
+                    if dr == -1:
+                        rect = fill_vertical.get_rect(
+                            top=self.cell_size + previous.r * (self.cell_size + self.padding) - self.padding,
+                            left=self.cell_size + cell.c * (self.cell_size + self.padding) + self.padding)
+                    else:
+                        rect = fill_vertical.get_rect(
+                            top=self.cell_size + cell.r * (self.cell_size + self.padding) - self.padding,
+                            left=self.cell_size + cell.c * (self.cell_size + self.padding) + self.padding)
+                    self.screen.blit(fill_vertical, rect)
+            previous = cell
 
     def clear(self, color=(0, 0, 0)):
         self.screen.fill(color)
