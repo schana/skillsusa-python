@@ -1,10 +1,8 @@
+from game import config
 from game.internal import game_state, graphics
 from game.internal import snake
 
-RUNS = 100000
-DISPLAY = True
 RECORD = False
-DELAY = 50
 TURN_LIMIT = 1000
 runs = 0
 
@@ -12,7 +10,7 @@ runs = 0
 def main():
     global runs
     game_state.reset()
-    if DISPLAY:
+    if config.DISPLAY:
         painter = graphics.Painter()
         painter.initialize()
         while True:
@@ -21,7 +19,7 @@ def main():
             painter.draw_snake()
             painter.draw_food()
             if snake.alive and game_state.age < TURN_LIMIT:
-                painter.draw(delay=DELAY)
+                painter.draw(delay=config.DELAY)
                 game_state.step()
             else:
                 painter.draw(delay=1000)
@@ -31,7 +29,7 @@ def main():
     else:
         sum_score = 0
         sum_age = 0
-        while runs < RUNS:
+        while runs < config.RUNS:
             if snake.alive and game_state.age < TURN_LIMIT:
                 game_state.step()
             else:
@@ -39,8 +37,8 @@ def main():
                 sum_score += game_state.get_score()
                 sum_age += game_state.age
                 game_state.reset()
-                if runs % (RUNS / 20) == 0:
-                    print('{}% complete'.format(100 * runs / RUNS))
+                if runs % (config.RUNS / 20) == 0:
+                    print('{}% complete'.format(100 * runs / config.RUNS))
         print('Average Score: ', float(sum_score) / runs, ', Average Age: ', float(sum_age) / runs, sep='')
 
 

@@ -5,6 +5,7 @@ setup(
     version='1.0',
     packages=find_packages(),
     install_requires=['pygame'],
+    entry_points={'console_scripts': ['snake = game.runner:main']},
     url='github.com/schana/skillsusa',
     license='License :: OSI Approved :: Apache Software License',
     author='Nathaniel Schaaf',
